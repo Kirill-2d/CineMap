@@ -154,7 +154,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     children: [
                       const Icon(Icons.error_outline, size: 48, color: AppTheme.textSecondary),
                       const SizedBox(height: 8),
-                      Text('Ошибка: \$e', style: const TextStyle(color: AppTheme.textSecondary)),
+                      Text('Ошибка: $e', style: const TextStyle(color: AppTheme.textSecondary)),
                     ],
                   ),
                 ),
@@ -200,7 +200,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.info_outline, size: 48, color: AppTheme.textSecondary.withValues(alpha: 0.5)),
+        Icon(Icons.info_outline, size: 48, color: AppTheme.textSecondary.withOpacity(0.5)),
         const SizedBox(height: 12),
         Text(
           text,
