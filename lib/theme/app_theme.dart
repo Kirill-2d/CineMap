@@ -14,7 +14,6 @@ class AppTheme {
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
       seedColor: primary,
-      background: background,
       surface: surface,
     ),
     scaffoldBackgroundColor: background,
@@ -39,11 +38,11 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: primary, width: 1.5),
+        borderSide: const BorderSide(color: primary, width: 1.5),
       ),
-      hintStyle: TextStyle(color: textSecondary, fontSize: 14),
+      hintStyle: const TextStyle(color: textSecondary, fontSize: 14),
       prefixIconColor: textSecondary,
-      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
   );
 }
