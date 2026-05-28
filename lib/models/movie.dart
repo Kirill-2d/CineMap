@@ -10,7 +10,7 @@ class Movie {
   final String? originalLanguage;
   final bool isTV;
 
-  Movie({
+  const Movie({
     required this.id,
     required this.title,
     this.posterPath,
@@ -37,15 +37,18 @@ class Movie {
   factory Movie.fromJson(Map<String, dynamic> json) {
     final isTV = json.containsKey('first_air_date');
     return Movie(
-      id: json['id'] ?? 0,
-      title: json['title'] ?? json['name'] ?? '',
-      posterPath: json['poster_path'],
-      backdropPath: json['backdrop_path'],
-      rating: (json['vote_average'] ?? 0).toDouble(),
-      releaseDate: json['release_date'] ?? json['first_air_date'],
-      overview: json['overview'],
-      originCountry: List<String>.from(json['origin_country'] ?? []),
-      originalLanguage: json['original_language'],
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      title: (json['title'] ?? json['name'] ?? '') as String,
+      posterPath: json['poster_path'] as String?,
+      backdropPath: json['backdrop_path'] as String?,
+      rating: (json['vote_average'] as num?)?.toDouble() ?? 0.0,
+      releaseDate: (json['release_date'] ?? json['first_air_date']) as String?,
+      overview: json['overview'] as String?,
+      originCountry: (json['origin_country'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      originalLanguage: json['original_language'] as String?,
       isTV: isTV,
     );
   }
