@@ -7,10 +7,22 @@ allprojects {
 
 rootProject.buildDir = "../build"
 subprojects {
-    project.buildDir = "\${rootProject.buildDir}/\${project.name}"
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 subprojects {
     project.evaluationDependsOn(":app")
+}
+
+// Force jvmTarget 1.8 on ALL Kotlin compile tasks across all subprojects
+// including Flutter's own gradle plugin build
+gradle.projectsEvaluated {
+    allprojects {
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
 }
 
 tasks.register("clean", Delete) {
