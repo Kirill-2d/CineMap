@@ -15,30 +15,22 @@ class TMDBService {
   static Future<List<Movie>> searchMovies(String query, {String? type}) async {
     if (query.trim().isEmpty) return [];
 
-    String endpoint;
-    switch (type) {
-      case 'tv':
-        endpoint = '/search/tv';
-        break;
-      case 'anime':
-        endpoint = '/search/tv';
-        break;
-      default:
-        endpoint = '/search/movie';
-    }
+    final endpoint = (type == 'tv' || type == 'anime') ? '/search/tv' : '/search/movie';
 
-    final uri = Uri.parse('$_baseUrl$endpoint').replace(queryParameters: {
+    final params = <String, String>{
       'api_key': _apiKey,
       'query': query,
       'language': 'ru-RU',
-      if (type == 'anime') 'with_genres': '16',
-    });
+    };
+    if (type == 'anime') params['with_genres'] = '16';
+
+    final uri = Uri.parse('$_baseUrl$endpoint').replace(queryParameters: params);
 
     final response = await http.get(uri);
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final results = data['results'] as List;
-      return results.map((e) => Movie.fromJson(e)).toList();
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      final results = data['results'] as List<dynamic>;
+      return results.map((e) => Movie.fromJson(e as Map<String, dynamic>)).toList();
     }
     return [];
   }
@@ -52,7 +44,7 @@ class TMDBService {
 
     final response = await http.get(uri);
     if (response.statusCode == 200) {
-      return Movie.fromJson(json.decode(response.body));
+      return Movie.fromJson(json.decode(response.body) as Map<String, dynamic>);
     }
     return null;
   }
@@ -65,9 +57,9 @@ class TMDBService {
 
     final response = await http.get(uri);
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final results = data['results'] as List;
-      return results.map((e) => Movie.fromJson(e)).toList();
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      final results = data['results'] as List<dynamic>;
+      return results.map((e) => Movie.fromJson(e as Map<String, dynamic>)).toList();
     }
     return [];
   }
