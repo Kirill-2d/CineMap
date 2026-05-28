@@ -14,18 +14,6 @@ final searchResultsProvider = FutureProvider.autoDispose<List<Movie>>((ref) asyn
   final filter = ref.watch(searchFilterProvider);
   if (query.trim().isEmpty) return [];
 
-  String? type;
-  switch (filter) {
-    case SearchFilter.tv:
-      type = 'tv';
-      break;
-    case SearchFilter.anime:
-      type = 'anime';
-      break;
-    default:
-      type = null;
-  }
-
   if (filter == SearchFilter.all) {
     final movies = await TMDBService.searchMovies(query, type: null);
     final tv = await TMDBService.searchMovies(query, type: 'tv');
@@ -34,6 +22,9 @@ final searchResultsProvider = FutureProvider.autoDispose<List<Movie>>((ref) asyn
     return combined;
   }
 
+  String? type;
+  if (filter == SearchFilter.tv) type = 'tv';
+  if (filter == SearchFilter.anime) type = 'anime';
   return TMDBService.searchMovies(query, type: type);
 });
 
@@ -53,6 +44,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     super.initState();
     _controller.addListener(() {
       Future.delayed(const Duration(milliseconds: 400), () {
+        if (!mounted) return;
         if (_controller.text == _debounce.value) return;
         _debounce.value = _controller.text;
         ref.read(searchQueryProvider.notifier).state = _controller.text;
@@ -63,6 +55,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   void dispose() {
     _controller.dispose();
+    _debounce.dispose();
     super.dispose();
   }
 
@@ -77,7 +70,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Row(
@@ -93,13 +85,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   const Spacer(),
                   CircleAvatar(
                     radius: 18,
-                    backgroundColor: AppTheme.primary.withOpacity(0.1),
+                    backgroundColor: Color(0x1A6C5CE7),
                     child: const Icon(Icons.person, color: AppTheme.primary, size: 20),
                   ),
                 ],
               ),
             ),
-            // Search field
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: TextField(
@@ -120,7 +111,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 onSubmitted: (v) => ref.read(searchQueryProvider.notifier).state = v,
               ),
             ),
-            // Filter chips
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -153,7 +143,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 }).toList(),
               ),
             ),
-            // Results
             Expanded(
               child: results.when(
                 loading: () => const Center(
@@ -165,7 +154,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     children: [
                       const Icon(Icons.error_outline, size: 48, color: AppTheme.textSecondary),
                       const SizedBox(height: 8),
-                      Text('Ошибка: $e', style: const TextStyle(color: AppTheme.textSecondary)),
+                      Text('Ошибка: \$e', style: const TextStyle(color: AppTheme.textSecondary)),
                     ],
                   ),
                 ),
@@ -179,11 +168,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(16, 8, 16, 4),
                         child: Text(
                           'Результаты поиска',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
                             color: AppTheme.textSecondary,
                             fontWeight: FontWeight.w500,
@@ -211,7 +200,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.info_outline, size: 48, color: AppTheme.textSecondary.withOpacity(0.5)),
+        Icon(Icons.info_outline, size: 48, color: AppTheme.textSecondary.withValues(alpha: 0.5)),
         const SizedBox(height: 12),
         Text(
           text,
