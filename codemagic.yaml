@@ -1,0 +1,28 @@
+workflows:
+  android-and-ios:
+    name: CineMap Android & iOS
+    max_build_duration: 60
+    environment:
+      flutter: 3.19.6
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Build Android APK
+        script: |
+          cd android
+          flutter build apk --debug
+      - name: Build iOS (no signing)
+        script: |
+          flutter build ios --debug --no-codesign
+    artifacts:
+      - build/app/outputs/flutter-apk/app-debug.apk
+      - build/ios/iphoneos/Runner.app
+    publishing:
+      email:
+        recipients:
+          - karagodin.kirill.1991@gmail.com
+        notify:
+          success: true
+          failure: true
