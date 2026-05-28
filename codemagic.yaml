@@ -9,10 +9,10 @@ workflows:
     scripts:
       - name: Get Flutter packages
         script: flutter pub get
-      - name: Build iOS (no signing)
-        script: flutter build ios --debug --no-codesign
+      - name: Build iOS simulator (no signing needed)
+        script: flutter build ios --simulator --debug
     artifacts:
-      - build/ios/iphoneos/Runner.app
+      - build/ios/iphonesimulator/Runner.app
     publishing:
       email:
         recipients:
